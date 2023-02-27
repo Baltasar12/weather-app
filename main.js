@@ -13,8 +13,35 @@ const apiKey = "432816b6fc4859fe00c340ebbf5e9954";
 form.addEventListener("submit", e => {
     e.preventDefault();
     let inputVal = input.value;
-})
 
+    const listItems = list.querySelectorAll(".ajax-section .city");
+    const listItemsArray = Array.from(listItems);
+
+    if(listItemsArray.length > 0){
+        //2
+        const filteredArray = listItemsArray.filter(el =>{
+            let content = "";
+            if(inputVal.includes(",")){
+                if(inputVal.split(",")[1].length>2){
+                    inputVal = inputVal.split(",")[0];
+                    content = el.querySelector(".city-name span").textContent.toLowerCase();
+                }else{
+                    content = el.querySelector(".city-name").dataset.name.toLowerCase();
+                }
+            } else{
+                content = el.querySelector(".city-name span").textContent.toLowerCase();
+            }
+            return content == inputVal.toLowerCase();
+        });
+
+        //3
+        if(filteredArray.length > 0){
+            msg.textContent = `You already know the weather for ${filteredArray[0].querySelector(".city-name span").textContent} ...otherwise be more specific by providing the country code as well`;
+            form.reset();
+            input.focus();
+            return;
+        }
+    }
 
 
 //AJAX
@@ -43,3 +70,11 @@ fetch(url)
         list.appendChild(li);
     })
     .catch(()=>{msg.textContent = "Please search for a valid city";});
+
+msg.textContent = "";
+form.reset();
+input.focus();
+});
+
+
+
